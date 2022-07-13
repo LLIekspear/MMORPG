@@ -1,0 +1,56 @@
+name: MMORPG
+version: 0.0.1
+author: LLIekspear
+main: com.main.Main
+api-version: 1.16
+loadbefore: [Vault, WorldEdit]
+depend: [WorldGuard]
+commands:
+    buy:
+        description: buy construction
+        usage: /buy <building>
+        permission: lliekspear.build
+    npctrader:
+        description: lol
+        usage: /npctrader <param>
+        permission: lliekspear.npc
+    race:
+        description: Open the Race Menu
+        usage: /race
+        permission: lliekspear.normal
+    rc:
+        description: Send Message in Race Chat
+        usage: /rc [text]
+        permission: lliekspear.normal
+    rmotd:
+        description: Set the Race Motd
+        usage: /rmotd [text]
+        permission: lliekspear.normal
+    group:
+        description: Open the Group Menu
+        usage: /group
+        permission: wauz.normal
+    grc:
+        description: Send Message in Group Chat
+        usage: /grc [text]
+        permission: wauz.normal
+    gdesc:
+        description: Set the Group Description
+        usage: /gdesc [text]
+        permission: wauz.normal
+    legion:
+        description: Open the legion menu
+        usage: /legion [name/menu]
+        permission: wauz.normal
+    lc:
+        description: Send the message in Legion chat
+        usage: /lc [text]
+        permission: wauz.normal
+    lmotd:
+        description: Set the Legion Motd
+        usage: /lmotd [text]
+        permission: wauz.normal
+    apply:
+        description: Apply for action
+        usage: /apply
+        permission: wauz.normal
