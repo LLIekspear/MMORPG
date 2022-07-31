@@ -50,12 +50,14 @@ public class ItemSettings {
 		item.setItemMeta(meta);
 		return item;
 	}
-	public static ItemStack createArtifact(ItemStack item, String name, List<String> lore, int tradable, int pvp, int pve, int physic, int magic, int crit, int health, int rarity) {
+	public static ItemStack createArtifact(ItemStack item, String name, List<String> lore, int tradable, int pvp, int pve, int physic, int magic, int crit, int health, int rarity, double speed) {
 		ItemMeta meta=item.getItemMeta();
 		AttributeModifier modifier_attack=new AttributeModifier(UUID.randomUUID(), "generic.attack_damage", physic, Operation.ADD_NUMBER, EquipmentSlot.OFF_HAND);
 		AttributeModifier modifier_health=new AttributeModifier(UUID.randomUUID(), "generic.max_health", health, Operation.ADD_NUMBER, EquipmentSlot.OFF_HAND);
+		AttributeModifier modifier_speed=new AttributeModifier(UUID.randomUUID(), "generic.movement_speed", speed, Operation.ADD_NUMBER, EquipmentSlot.OFF_HAND);
 		meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier_attack);
 		meta.addAttributeModifier(Attribute.GENERIC_MAX_HEALTH, modifier_health);
+		meta.addAttributeModifier(Attribute.GENERIC_MOVEMENT_SPEED, modifier_speed);
 		meta.setDisplayName(getColor(rarity)+""+ChatColor.BOLD+name);
 		if(tradable==0) {
 			lore.add("");
@@ -84,6 +86,7 @@ public class ItemSettings {
 		AttributeModifier modifier_speed= new AttributeModifier(UUID.randomUUID(), "generic.attack_speed", speed, Operation.ADD_NUMBER, EquipmentSlot.HAND);
 		meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier_attack);
 		meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier_speed);
+		meta.setUnbreakable(true);
 		if(tradable==0) {
 			lore.add("");
 			lore.add(ChatColor.GOLD+""+ChatColor.BOLD+"Нельзя передать");
@@ -118,14 +121,15 @@ public class ItemSettings {
 		return item;
 	}
 	
-	public static ItemStack createArmor(ItemStack item, String name, List<String> lore, int tradable, int pvp, int pve, int physic, int magic, int speed, int rarity, int category, EquipmentSlot slot) {
+	public static ItemStack createArmor(ItemStack item, String name, List<String> lore, int tradable, int pvp, int pve, int physic, int magic, float speed, int rarity, int category, EquipmentSlot slot) {
 		ItemMeta meta=item.getItemMeta();
 		meta.setDisplayName(getColor(rarity)+""+ChatColor.BOLD+name);
 		meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
 		AttributeModifier modifier_armor=new AttributeModifier(UUID.randomUUID(), "generic.armor", physic, Operation.ADD_NUMBER, slot);
-		AttributeModifier modifier_speed=new AttributeModifier(UUID.randomUUID(), "generic.movement_speed", speed, Operation.ADD_NUMBER, slot);
+		AttributeModifier modifier_speed=new AttributeModifier(UUID.randomUUID(), "generic.movement_speed", (speed/100), Operation.ADD_NUMBER, slot);
 		meta.addAttributeModifier(Attribute.GENERIC_ARMOR, modifier_armor);
 		meta.addAttributeModifier(Attribute.GENERIC_MOVEMENT_SPEED, modifier_speed);
+		meta.setUnbreakable(true);
 		if(tradable==0) {
 			lore.add("");
 			lore.add(ChatColor.GOLD+""+ChatColor.BOLD+"Нельзя передать");
@@ -142,7 +146,7 @@ public class ItemSettings {
 		lore.add("");
 		lore.add(ChatColor.WHITE+""+ChatColor.BOLD+"Физ. защита: "+Integer.toString(physic));
 		lore.add(ChatColor.WHITE+""+ChatColor.BOLD+"Маг. защита: "+Integer.toString(magic));
-		lore.add(ChatColor.WHITE+""+ChatColor.BOLD+"Скорость: "+Integer.toString(speed)+"%");
+		lore.add(ChatColor.WHITE+""+ChatColor.BOLD+"Скорость: "+Float.toString(speed)+"%");
 		if(pvp!=0) {
 			lore.add(ChatColor.RED+""+ChatColor.BOLD+"Защита PVP: "+Integer.toString(pvp)+"%");
 		}
