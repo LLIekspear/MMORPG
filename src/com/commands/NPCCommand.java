@@ -18,6 +18,14 @@ public class NPCCommand implements CommandExecutor {
 		e.setAI(false);
 	}
 	
+	public void createNPC2(Location loc) {
+		Villager villager=(Villager)Bukkit.getWorld("world").spawnEntity(loc, EntityType.VILLAGER);
+		villager.setCustomName("Белукас");
+		villager.setCustomNameVisible(true);
+		villager.setProfession(Profession.SHEPHERD);
+		freezeEntity(villager);
+	}
+	
 	public void createNPC(Location loc) {
 		Villager villager=(Villager)Bukkit.getWorld("world").spawnEntity(loc, EntityType.VILLAGER);
 		villager.setCustomName("ТоварнаяБиржа");
@@ -43,6 +51,9 @@ public class NPCCommand implements CommandExecutor {
 		} else if(sender instanceof Player && args[0].equalsIgnoreCase("gold")&&p.hasPermission("lliekspear.gold_trader_creation")) {
 			Location loc=p.getLocation();
 			createNPC(loc);
+		} else if(sender instanceof Player &&args[0].equalsIgnoreCase("weapon")&&p.hasPermission("lliekspear.weapon_trader_creation")) {
+			Location loc=p.getLocation();
+			createNPC2(loc);
 		} else {
 			sender.sendMessage(ChatColor.RED+"Произошла ошибка на этапе создания торговца. У Вас достаточно прав для этого действия?");
 		}
