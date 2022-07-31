@@ -5,16 +5,17 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
+//import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginManager;
+//import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.boss.TestBoss;
 import com.brewery.BrewingRecipe;
-import com.brewery.CustomAlco;
+//import com.brewery.CustomAlco;
 import com.brewery.PotionEvent;
 import com.commands.ApplyCommand;
 import com.commands.CommandExecutor;
@@ -29,19 +30,28 @@ import com.commands.RaceChatCommand;
 import com.commands.RaceCommand;
 import com.commands.RaceMotdCommand;
 import com.commands.SchemCommand;
+import com.dungeon.GhostCastle;
+import com.items.CraftRecipes;
 import com.listeners.BlockPutListener;
 import com.listeners.ClassListener;
 import com.listeners.DamageListener;
+import com.listeners.DeathListener;
 import com.listeners.DialogListener;
+import com.listeners.EquipmentListener;
 import com.listeners.FishListener;
 import com.listeners.GroupListener;
 import com.listeners.GuildApplicationListener;
 import com.listeners.GuildListener;
 import com.listeners.HorseListener;
+import com.listeners.ItemUseListener;
 import com.listeners.MoveListener;
 import com.listeners.NPCListener;
 import com.listeners.PreJoinListener;
 import com.listeners.RaceListener;
+import com.quest.QuestCommand;
+import com.quest.QuestListener;
+import com.rep.ReputationCommand;
+import com.rep.ReputationListener;
 
 import net.milkbowl.vault.economy.Economy;
 
@@ -55,6 +65,8 @@ public class Main extends JavaPlugin {
 	private Logger log=getLogger();
 	public static Economy economy=null;
 	public List<BrewingRecipe> recipes=new ArrayList<BrewingRecipe>();
+	public static QuestListener quests=new QuestListener();
+	public static ReputationListener reps=new ReputationListener();
 	//private static BukkitAudiences audiences;
 	//private static DiscordBot discordBot;
 	//private static WebServerManager webServerManager;
@@ -65,6 +77,14 @@ public class Main extends JavaPlugin {
 		if(economyProvider!=null) {
 			economy=economyProvider.getProvider();
 		}
+	}
+	
+	public ReputationListener getReps() {
+		return reps;
+	}
+	
+	public QuestListener getQuests() {
+		return quests;
 	}
 	
 	@Override
@@ -91,6 +111,12 @@ public class Main extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new PotionEvent(), this);
 		getServer().getPluginManager().registerEvents(new BlockPutListener(), this);
 		getServer().getPluginManager().registerEvents(new HorseListener(), this);
+		getServer().getPluginManager().registerEvents(new TestBoss(), this);
+		getServer().getPluginManager().registerEvents(new EquipmentListener(), this);
+		getServer().getPluginManager().registerEvents(new DeathListener(), this);
+		getServer().getPluginManager().registerEvents(new ItemUseListener(), this);
+		getServer().getPluginManager().registerEvents(quests, this);
+		getServer().getPluginManager().registerEvents(reps, this);
 		getServer().getScheduler().scheduleSyncDelayedTask(this, instance::setupModules);
 		Guild.init();
 		Race.init();
@@ -106,12 +132,23 @@ public class Main extends JavaPlugin {
 		getCommand("lmotd").setExecutor(new GuildMotdCommand());
 		getCommand("npctrader").setExecutor(new NPCCommand());
 		getCommand("buy").setExecutor(new SchemCommand());
+		getCommand("quest").setExecutor(new QuestCommand());
+		getCommand("rep").setExecutor(new ReputationCommand());
 		setupEconomy();
-		new BrewingRecipe(Material.BLACK_DYE, new CustomAlco());
+//		new BrewingRecipe(Material.WHITE_WOOL, new CustomAlco());
+		new CraftRecipes().recipesInit();
+		Bukkit.getServer().unloadWorld("plugins/MMORPG/Dungeons/GhostCastle", false);
+		new GhostCastle().initCastle();
+		quests.getQuests();
+	}
+	
+	@Override
+	public void onDisable() {
+		Bukkit.getServer().unloadWorld("plugins/MMORPG/Dungeons/GhostCastle", false);
 	}
 	
 	private void setupModules() {
-		PluginManager pm=getServer().getPluginManager();
+//		PluginManager pm=getServer().getPluginManager();
 		//....
 		isStarted=true;
 	}
