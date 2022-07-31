@@ -11,6 +11,7 @@ import org.bukkit.potion.PotionEffectType;
 
 public class MoveListener implements Listener {
 	
+	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent e) {
 		try {

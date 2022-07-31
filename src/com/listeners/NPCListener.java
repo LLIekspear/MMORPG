@@ -2,7 +2,10 @@ package com.listeners;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
@@ -10,6 +13,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -27,11 +31,104 @@ import com.main.Main;
 
 public class NPCListener implements Listener {
 
-//	private Economy economy;
 	Inventory inv=null;
+	Inventory inv2=null;
 	private static Main plugin=Main.getInstance();
 	private HashMap<Integer, String> events=new HashMap<Integer, String>();
 	private boolean isFirst=true;
+	
+	public void createInventory2() {
+		inv2=Bukkit.createInventory(null, 45, "Белукас");
+		
+		List<ItemStack> items=new ArrayList<ItemStack>();
+		items.add(new ItemStack(Material.DIAMOND_HELMET));
+		items.add(new ItemStack(Material.DIAMOND_CHESTPLATE));
+		items.add(new ItemStack(Material.DIAMOND_LEGGINGS));
+		items.add(new ItemStack(Material.DIAMOND_BOOTS));
+		items.add(new ItemStack(Material.DIAMOND_SWORD));
+		items.add(new ItemStack(Material.DIAMOND_PICKAXE));
+		items.add(new ItemStack(Material.DIAMOND_AXE));
+		items.add(new ItemStack(Material.DIAMOND_SHOVEL));
+		items.add(new ItemStack(Material.GOLDEN_HELMET));
+		items.add(new ItemStack(Material.GOLDEN_CHESTPLATE));
+		items.add(new ItemStack(Material.GOLDEN_LEGGINGS));
+		items.add(new ItemStack(Material.GOLDEN_BOOTS));
+		items.add(new ItemStack(Material.GOLDEN_SWORD));
+		items.add(new ItemStack(Material.GOLDEN_PICKAXE));
+		items.add(new ItemStack(Material.GOLDEN_AXE));
+		items.add(new ItemStack(Material.GOLDEN_SHOVEL));
+		items.add(new ItemStack(Material.IRON_HELMET));
+		items.add(new ItemStack(Material.IRON_CHESTPLATE));
+		items.add(new ItemStack(Material.IRON_LEGGINGS));
+		items.add(new ItemStack(Material.IRON_BOOTS));
+		items.add(new ItemStack(Material.IRON_SWORD));
+		items.add(new ItemStack(Material.IRON_PICKAXE));
+		items.add(new ItemStack(Material.IRON_AXE));
+		items.add(new ItemStack(Material.IRON_SHOVEL));
+		items.add(new ItemStack(Material.BOW));
+		items.add(new ItemStack(Material.CROSSBOW));
+		
+		List<String> prefixes=new ArrayList<String>();
+		prefixes.add(ChatColor.WHITE+"Обычный");
+		prefixes.add(ChatColor.GREEN+"Редкий");
+		prefixes.add(ChatColor.AQUA+"Легендарный");
+		prefixes.add(ChatColor.GOLD+"Уникальный");
+		prefixes.add(ChatColor.RED+"Эпический");
+		Collections.shuffle(items);
+		Random rg=new Random();
+		int amount=rg.nextInt(items.size());
+		
+		for(int i=0; i<amount; ++i) {
+			ItemStack item=randomEnchantment(items.get(i));
+			Collections.shuffle(prefixes);
+			ItemMeta meta=item.getItemMeta();
+			Random rg1=new Random();
+			int price=0;
+			if(item.getEnchantments().size()==0) {
+				meta.setDisplayName(prefixes.get(0)+" "+item.getItemMeta().getDisplayName());
+				price=(rg1.nextInt(15000-8000)+8000);
+			} else if(item.getEnchantments().size()>0&&item.getEnchantments().size()<=2) {
+				meta.setDisplayName(prefixes.get(1)+" "+item.getItemMeta().getDisplayName());
+				price=(rg1.nextInt(17000-10000)+10000)+item.getEnchantments().size()*2000;
+			} else if(item.getEnchantments().size()>2&&item.getEnchantments().size()<=4) {
+				meta.setDisplayName(prefixes.get(2)+" "+item.getItemMeta().getDisplayName());
+				price=(rg1.nextInt(30000-20000)+20000)+item.getEnchantments().size()*2000;
+			} else if(item.getEnchantments().size()>4&&item.getEnchantments().size()<=6) {
+				meta.setDisplayName(prefixes.get(3)+" "+item.getItemMeta().getDisplayName());
+				price=(rg1.nextInt(35000-25000)+25000)+item.getEnchantments().size()*2000;
+			} else if(item.getEnchantments().size()>6) {
+				meta.setDisplayName(prefixes.get(4)+" "+item.getItemMeta().getDisplayName());
+				price=(rg1.nextInt(60000-40000)+40000)+item.getEnchantments().size()*2000;
+			}
+			List<String> lore=new ArrayList<String>();
+			lore.add(ChatColor.GOLD+""+ChatColor.BOLD+"Стоимость предмета: "+Integer.toString(price));
+			meta.setLore(lore);
+			item.setItemMeta(meta);
+			inv2.addItem(item);
+		}
+		
+	}
+	
+	public ItemStack randomEnchantment(ItemStack item) {
+		List<Enchantment> enchans=new ArrayList<Enchantment>();
+		for(Enchantment ench : Enchantment.values()) {
+			if(ench.canEnchantItem(item)) {
+				enchans.add(ench);
+			}
+		}
+		
+		if(enchans.size()>=1) {
+			Collections.shuffle(enchans);
+			Random rg=new Random();
+			int amount=rg.nextInt(enchans.size());
+			for(int i=0; i<amount; ++i) {
+				Enchantment chosen=enchans.get(i);
+				if(!(chosen.equals(Enchantment.BINDING_CURSE))&&!(chosen.equals(Enchantment.VANISHING_CURSE)))
+					item.addEnchantment(chosen, 1+(int) (Math.random()*((chosen.getMaxLevel()-1)+1)));
+			}
+		}
+		return item;
+	}
 	
 	public void createInventory() {
 		inv=Bukkit.createInventory(null, 45, "ТоварнаяБиржа");
@@ -80,96 +177,96 @@ public class NPCListener implements Listener {
 	
 	public void setupEvent(int index) {
 		Random rg=new Random();
-		double randomDouble=rg.nextDouble()/10; //уже поделили на 100, готовый коэффициент
+		float randomFloat=rg.nextFloat()/10; //уже поделили на 100, готовый коэффициент
 		
 		if(index==0) {
 			Bukkit.broadcastMessage(ChatColor.GOLD+"[НОВОСТИ]"+ChatColor.RED+"Участились набеги разбойников! Наблюдаются проблемы с поставкой сахара, пшеницы, моркови, картофеля!");
 			//рост цен на перечисленное LOG
 			String info[]=configGet("SUGAR").split(" ");
-			double price=Double.parseDouble(info[0]);
+			float price=Float.parseFloat(info[0]);
 			int amount=Integer.parseInt(info[1]);
-			price+=price*randomDouble;
+			price+=price*randomFloat;
 			configSet("SUGAR", "price", price, amount);
 			
-			randomDouble=rg.nextDouble()/10;
+			randomFloat=rg.nextFloat()/10;
 			info=configGet("WHEAT").split(" ");
-			price=Double.parseDouble(info[0]);
+			price=Float.parseFloat(info[0]);
 			amount=Integer.parseInt(info[1]);
-			price+=price*randomDouble;
+			price+=price*randomFloat;
 			configSet("WHEAT", "price", price, amount);
 			
-			randomDouble=rg.nextDouble()/10;
+			randomFloat=rg.nextFloat()/10;
 			info=configGet("CARROT").split(" ");
-			price=Double.parseDouble(info[0]);
+			price=Float.parseFloat(info[0]);
 			amount=Integer.parseInt(info[1]);
-			price+=price*randomDouble;
+			price+=price*randomFloat;
 			configSet("CARROT", "price", price, amount);
 			
-			randomDouble=rg.nextDouble()/10;
+			randomFloat=rg.nextFloat()/10;
 			info=configGet("POTATO").split(" ");
-			price=Double.parseDouble(info[0]);
+			price=Float.parseFloat(info[0]);
 			amount=Integer.parseInt(info[1]);
-			price+=price*randomDouble;
+			price+=price*randomFloat;
 			configSet("POTATO", "price", price, amount);
 			
 		} else if(index==1) {
 			Bukkit.broadcastMessage(ChatColor.GOLD+"[НОВОСТИ]"+ChatColor.RED+"Наблюдаются лесные пожары! Имеются проблемы с поставкой древесины!");
 			//рост цен на древесину
-			String info[]=configGet("LOG").split(" ");
-			double price=Double.parseDouble(info[0]);
+			String info[]=configGet("OAK_LOG").split(" ");
+			float price=Float.parseFloat(info[0]);
 			int amount=Integer.parseInt(info[1]);
-			price+=price*randomDouble;
+			price+=price*randomFloat;
 			configSet("OAK_LOG", "price", price, amount);
 
 		} else if(index==2) {
 			Bukkit.broadcastMessage(ChatColor.GOLD+"[НОВОСТИ]"+ChatColor.RED+"Экономисты прогнозируют высокий уровень инфляции!");
 			//рост цен на изумруды и золото
 			String info[]=configGet("gold").split(" ");
-			double price=Double.parseDouble(info[0]);
+			float price=Float.parseFloat(info[0]);
 			int amount=Integer.parseInt(info[1]);
-			price+=price*randomDouble;
+			price+=price*randomFloat;
 			configSet("gold", "price", price, amount);
 			
-			randomDouble=rg.nextDouble()/10;
+			randomFloat=rg.nextFloat()/10;
 			info=configGet("emerald").split(" ");
-			price=Double.parseDouble(info[0]);
+			price=Float.parseFloat(info[0]);
 			amount=Integer.parseInt(info[1]);
-			price+=price*randomDouble;
+			price+=price*randomFloat;
 			configSet("emerald", "price", price, amount);
 		} else if(index==3) {
 			Bukkit.broadcastMessage(ChatColor.GOLD+"[НОВОСТИ]"+ChatColor.GREEN+"Зафиксирована высокая урожайность!");
 			//падение цен на сахар, пшеницу, морковь, картофель
 			String info[]=configGet("SUGAR").split(" ");
-			double price=Double.parseDouble(info[0]);
+			float price=Float.parseFloat(info[0]);
 			int amount=Integer.parseInt(info[1]);
-			price-=price*randomDouble;
+			price-=price*randomFloat;
 			if(price<=0)
 				price=10;
 			configSet("SUGAR", "price", price, amount);
 			
-			randomDouble=rg.nextDouble()/10;
+			randomFloat=rg.nextFloat()/10;
 			info=configGet("WHEAT").split(" ");
-			price=Double.parseDouble(info[0]);
+			price=Float.parseFloat(info[0]);
 			amount=Integer.parseInt(info[1]);
-			price-=price*randomDouble;
+			price-=price*randomFloat;
 			if(price<=0)
 				price=10;
 			configSet("WHEAT", "price", price, amount);
 			
-			randomDouble=rg.nextDouble()/10;
+			randomFloat=rg.nextFloat()/10;
 			info=configGet("CARROT").split(" ");
-			price=Double.parseDouble(info[0]);
+			price=Float.parseFloat(info[0]);
 			amount=Integer.parseInt(info[1]);
-			price-=price*randomDouble;
+			price-=price*randomFloat;
 			if(price<=0)
 				price=10;
 			configSet("CARROT", "price", price, amount);
 			
-			randomDouble=rg.nextDouble()/10;
+			randomFloat=rg.nextFloat()/10;
 			info=configGet("POTATO").split(" ");
-			price=Double.parseDouble(info[0]);
+			price=Float.parseFloat(info[0]);
 			amount=Integer.parseInt(info[1]);
-			price-=price*randomDouble;
+			price-=price*randomFloat;
 			if(price<=0)
 				price=10;
 			configSet("POTATO", "price", price, amount);
@@ -177,38 +274,38 @@ public class NPCListener implements Listener {
 			Bukkit.broadcastMessage(ChatColor.GOLD+"[НОВОСТИ]"+ChatColor.RED+"Замечена вспышка эпидемии скота!");
 			//рост цен на мясо и кожу
 			String info[]=configGet("PORKCHOP").split(" ");
-			double price=Double.parseDouble(info[0]);
+			float price=Float.parseFloat(info[0]);
 			int amount=Integer.parseInt(info[1]);
-			price+=price*randomDouble;
+			price+=price*randomFloat;
 			configSet("PORKCHOP", "price", price, amount);
 			
-			randomDouble=rg.nextDouble()/10;
+			randomFloat=rg.nextFloat()/10;
 			info=configGet("BEEF").split(" ");
-			price=Double.parseDouble(info[0]);
+			price=Float.parseFloat(info[0]);
 			amount=Integer.parseInt(info[1]);
-			price+=price*randomDouble;
+			price+=price*randomFloat;
 			configSet("BEEF", "price", price, amount);
 			
-			randomDouble=rg.nextDouble()/10;
+			randomFloat=rg.nextFloat()/10;
 			info=configGet("LEATHER").split(" ");
-			price=Double.parseDouble(info[0]);
+			price=Float.parseFloat(info[0]);
 			amount=Integer.parseInt(info[1]);
-			price+=price*randomDouble;
+			price+=price*randomFloat;
 			configSet("LEATHER", "price", price, amount);
 		} else if(index==5) {
 			Bukkit.broadcastMessage(ChatColor.GOLD+"[НОВОСТИ]"+ChatColor.RED+"Специалисты всё чаще упоминают про шахтинский кризис!");
 			//рост цен на редстоун и уголь
 			String info[]=configGet("REDSTONE").split(" ");
-			double price=Double.parseDouble(info[0]);
+			float price=Float.parseFloat(info[0]);
 			int amount=Integer.parseInt(info[1]);
-			price+=price*randomDouble;
+			price+=price*randomFloat;
 			configSet("REDSTONE", "price", price, amount);
 			
-			randomDouble=rg.nextDouble()/10;
+			randomFloat=rg.nextFloat()/10;
 			info=configGet("COAL").split(" ");
-			price=Double.parseDouble(info[0]);
+			price=Float.parseFloat(info[0]);
 			amount=Integer.parseInt(info[1]);
-			price+=price*randomDouble;
+			price+=price*randomFloat;
 			configSet("COAL", "price", price, amount);
 		}
 		update();
@@ -238,13 +335,13 @@ public class NPCListener implements Listener {
 			amount="Всего доступно для сделок "+info[1]+" штук.";
 		}
 		if(isFirst==true)
-			configSet(mat.name(), "openPrice", Double.parseDouble(info[0]), Integer.parseInt(info[1]));
+			configSet(mat.name(), "openPrice", Float.parseFloat(info[0]), Integer.parseInt(info[1]));
 		else {
 			String openPrice=configGet(mat.name()).split(" ")[2];
-			if(Double.parseDouble(info[0])>Double.parseDouble(openPrice)) {
+			if(Float.parseFloat(info[0])>Float.parseFloat(openPrice)) {
 				float percent=((Float.parseFloat(info[0])-Float.parseFloat(openPrice))*100)/Float.parseFloat(info[0]);
 				buyPrice=ChatColor.GREEN+buyPrice+" (+"+Float.toString(percent)+"%)";
-			} else if(Double.parseDouble(info[0])<Double.parseDouble(openPrice)) {
+			} else if(Float.parseFloat(info[0])<Float.parseFloat(openPrice)) {
 				float percent=((Float.parseFloat(openPrice)-Float.parseFloat(info[0]))*100)/Float.parseFloat(openPrice);
 				buyPrice=ChatColor.RED+buyPrice+" (-"+Float.toString(percent)+"%)";
 			}
@@ -270,10 +367,10 @@ public class NPCListener implements Listener {
 		File directory=new File(plugin.getDataFolder(), "/Exchange/");
 		File dataFile=new File(directory, mat+".yml");
 		FileConfiguration dataConfig=YamlConfiguration.loadConfiguration(dataFile);
-		double price=dataConfig.getDouble("price");
+		float price=(float)dataConfig.getDouble("price");
 		int amount=dataConfig.getInt("amount");
-		double openPrice=dataConfig.getDouble("openPrice");
-		String result=Double.toString(price)+" "+Integer.toString(amount)+" "+Double.toString(openPrice);
+		float openPrice=(float)dataConfig.getDouble("openPrice");
+		String result=Float.toString(price)+" "+Integer.toString(amount)+" "+Float.toString(openPrice);
 		return result;
 	}
 	
@@ -281,9 +378,9 @@ public class NPCListener implements Listener {
 		File directory=new File(plugin.getDataFolder(), "/Exchange/");
 		File dataFile=new File(directory, "gold.yml");
 		FileConfiguration dataConfig=YamlConfiguration.loadConfiguration(dataFile);
-		double buyPrice=dataConfig.getDouble("price");
+		float buyPrice=(float)dataConfig.getDouble("price");
 		int amount=dataConfig.getInt("amount");
-		String result=Double.toString(buyPrice)+" "+Integer.toString(amount);
+		String result=Float.toString(buyPrice)+" "+Integer.toString(amount);
 		return result;
 	}
 	
@@ -291,9 +388,9 @@ public class NPCListener implements Listener {
 		File directory=new File(plugin.getDataFolder(), "/Exchange/");
 		File dataFile=new File(directory, "emerald.yml");
 		FileConfiguration dataConfig=YamlConfiguration.loadConfiguration(dataFile);
-		double buyPrice=dataConfig.getDouble("price");
+		float buyPrice=(float)dataConfig.getDouble("price");
 		int amount=dataConfig.getInt("amount");
-		String result=Double.toString(buyPrice)+" "+Integer.toString(amount);
+		String result=Float.toString(buyPrice)+" "+Integer.toString(amount);
 		return result;
 	}
 	
@@ -303,6 +400,8 @@ public class NPCListener implements Listener {
 			if(e.getEntity().getCustomName()=="ТоварнаяБиржа"&&!(e.getDamager().isOp())) {
 				e.setCancelled(true);
 			} else if(e.getEntity().getCustomName()=="Рыба"&&!(e.getDamager().isOp())) {
+				e.setCancelled(true);
+			} else if(e.getEntity().getCustomName()=="Белукас"&&!(e.getDamager().isOp())) {
 				e.setCancelled(true);
 			}
 		} catch(Exception error) {
@@ -355,6 +454,36 @@ public class NPCListener implements Listener {
 	}
 	
 	@EventHandler
+	public void onInvClick1(InventoryClickEvent e) {
+		Player p=(Player)e.getWhoClicked();
+		if(!(e.getView().getTitle().equals("Белукас")))
+			return;
+		if(e.getView().getTitle().equals("Белукас")) {
+//			p.sendMessage("Клац");
+			e.setCancelled(true);
+			try {
+				int price=Integer.parseInt(e.getCurrentItem().getItemMeta().getLore().get(0).replace(ChatColor.GOLD+""+ChatColor.BOLD+"Стоимость предмета: ", "").toString());
+				double player_balance=Main.economy.getBalance(p);
+				if(player_balance>=price) {
+					Main.economy.withdrawPlayer(p, price);
+					p.sendMessage(ChatColor.GREEN+"Вы успешно приобрели предмет!");
+					ItemStack item=e.getCurrentItem();
+					ItemMeta meta=item.getItemMeta();
+					List<String> lore=new ArrayList<String>();
+					lore.add(ChatColor.RED+"Приобрел "+p.getName()+" у Белукаса");
+					meta.setLore(lore);
+					item.setItemMeta(meta);
+					p.getInventory().addItem(item);
+				} else {
+					p.sendMessage(ChatColor.RED+"У Вас недостаточно средств!");
+				}
+			} catch(Exception error) {
+				error.printStackTrace();
+			}
+		}
+	}
+	
+	@EventHandler
 	public void onInvClick(InventoryClickEvent e) {
 		Player p=(Player)e.getWhoClicked();
 		if(!(e.getView().getTitle().equals("ТоварнаяБиржа")))
@@ -365,7 +494,7 @@ public class NPCListener implements Listener {
 		
 		if(e.getSlot()==0) {
 			String info[]=configGetGoldInfo().split(" ");
-			double price=Double.parseDouble(info[0]);
+			float price=Float.parseFloat(info[0]);
 			int amount=Integer.parseInt(info[1]);
 			double player_balance = Main.economy.getBalance(p);
 			Random rg=new Random();
@@ -417,7 +546,7 @@ public class NPCListener implements Listener {
 		} else if(e.getSlot()==1) {
 			String info[]=configGetEmeraldInfo().split(" ");
 			//emer
-			double price=Double.parseDouble(info[0]);
+			float price=Float.parseFloat(info[0]);
 			int amount=Integer.parseInt(info[1]);
 			double player_balance = Main.economy.getBalance(p);
 			Random rg=new Random();
@@ -470,7 +599,7 @@ public class NPCListener implements Listener {
 			try {
 				String mat=e.getCurrentItem().getType().name();
 				String info[]=configGet(mat).split(" ");
-				double price=Double.parseDouble(info[0]);
+				float price=Float.parseFloat(info[0]);
 				int amount=Integer.parseInt(info[1]);
 				double player_balance = Main.economy.getBalance(p);
 				Random rg=new Random();
@@ -558,6 +687,12 @@ public class NPCListener implements Listener {
 				} catch(NullPointerException error) {
 					//
 				}
+			} else if(villager.getProfession()==Villager.Profession.SHEPHERD&&villager.getCustomName().equals("Белукас")) {
+				e.setCancelled(true);
+				if(inv2==null) {
+					createInventory2();
+				}
+				p.openInventory(inv2);
 			}
 		}
 	}

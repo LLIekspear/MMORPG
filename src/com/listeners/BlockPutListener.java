@@ -1,8 +1,6 @@
 package com.listeners;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.util.UUID;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -10,6 +8,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -61,6 +61,22 @@ public class BlockPutListener implements Listener {
 		} catch(Exception error) {
 			//
 		}*/
+	}
+	
+	@EventHandler
+	public void onBlockPutGroundDungeon(BlockPlaceEvent e) {
+		if(e.getPlayer().getWorld().getName().equalsIgnoreCase("plugins/MMORPG/Dungeons/GhostCastle")) {
+			e.getPlayer().sendMessage(ChatColor.RED+"Здесь нельзя строить!");
+			e.setCancelled(true);
+		}
+	}
+	
+	@EventHandler
+	public void onBlockBreakDungeon(BlockBreakEvent e) {
+		if(e.getPlayer().getWorld().getName().equalsIgnoreCase("plugins/MMORPG/Dungeons/GhostCastle")) {
+			e.getPlayer().sendMessage(ChatColor.RED+"Здесь нельзя ломать!");
+			e.setCancelled(true);
+		}
 	}
 	
 	@EventHandler

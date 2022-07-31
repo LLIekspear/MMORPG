@@ -83,6 +83,9 @@ public class DamageListener implements Listener {
 							}*/
 							if(param[0].equalsIgnoreCase("Защита PVP")) {
 								attack-=(defense*Integer.parseInt(param[1].toString().split("%")[0].toString()))/100;
+								if(attack<0) {
+									attack=0;
+								}
 								//entity.sendMessage("% PVP def helmet: "+Integer.parseInt(param[1]));
 							}
 							//
@@ -95,6 +98,8 @@ public class DamageListener implements Listener {
 							}*/
 							if(param[0].equalsIgnoreCase("Защита PVP")) {
 								attack-=(defense*Integer.parseInt(param[1].toString().split("%")[0].toString()))/100;
+								if(attack<0)
+									attack=0;
 								//entity.sendMessage("% PVP def chest: "+Integer.parseInt(param[1]));
 							}
 							//
@@ -107,6 +112,8 @@ public class DamageListener implements Listener {
 							}*/
 							if(param[0].equalsIgnoreCase("Защита PVP")) {
 								attack-=(defense*Integer.parseInt(param[1].toString().split("%")[0].toString()))/100;
+								if(attack<0)
+									attack=0;
 								//entity.sendMessage("% PVP def legs: "+Integer.parseInt(param[1]));
 							}
 							//
@@ -119,6 +126,8 @@ public class DamageListener implements Listener {
 							}*/
 							if(param[0].equalsIgnoreCase("Защита PVP")) {
 								attack-=(defense*Integer.parseInt(param[1].toString().split("%")[0].toString()))/100;
+								if(attack<0)
+									attack=0;
 								//entity.sendMessage("% PVP def boots: "+Integer.parseInt(param[1]));
 							}
 							//
@@ -230,6 +239,8 @@ public class DamageListener implements Listener {
 			} catch(Exception error) {
 //				error.printStackTrace();
 			}
+			if(attack<0)
+				attack=0;
 			Random rg=new Random();
 			int len=100;
 			int randomInt=rg.nextInt(len);
