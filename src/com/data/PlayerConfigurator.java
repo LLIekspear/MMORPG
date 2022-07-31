@@ -34,6 +34,13 @@ public class PlayerConfigurator extends PlayerDataConfiguration {
 		return playerConfigGetString(p, "rank");
 	}
 	
+	public static void setHeroRep(OfflinePlayer p, int rep) {
+		playerConfigSet(p, "rep", rep);
+	}
+	
+	public static int getHeroRep(OfflinePlayer p) {
+		return playerConfigGetInt(p, "rep");
+	}
 	/*public static void setRank(OfflinePlayer player, Rank rank) {
 		playerConfigSet(player, "rank", rank.getRankName());
 	}*/
@@ -49,6 +56,10 @@ public class PlayerConfigurator extends PlayerDataConfiguration {
 	
 	public static String getGuildString(Player p) {
 		return playerConfigGetString(p,"guild");
+	}
+	
+	public static String getGuildString(OfflinePlayer p) {
+		return playerConfigGetString(p, "guild");
 	}
 	
 	public static Guild getGuild(Player p) {
