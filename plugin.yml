@@ -3,9 +3,17 @@ version: 0.0.1
 author: LLIekspear
 main: com.main.Main
 api-version: 1.16
-loadbefore: [Vault, WorldEdit]
+loadbefore: [Vault, WorldEdit, ArmorEvent]
 depend: [WorldGuard]
 commands:
+    rep:
+        description: rep command
+        usage: /rep <arg>
+        permission: lliekspear.rep
+    quest:
+        description: quest command
+        usage: /quest <arg>
+        permission: lliekspear.quest
     buy:
         description: buy construction
         usage: /buy <building>
@@ -29,28 +37,32 @@ commands:
     group:
         description: Open the Group Menu
         usage: /group
-        permission: wauz.normal
+        permission: lliekspear.normal
     grc:
         description: Send Message in Group Chat
         usage: /grc [text]
-        permission: wauz.normal
+        permission: lliekspear.normal
     gdesc:
         description: Set the Group Description
         usage: /gdesc [text]
-        permission: wauz.normal
+        permission: lliekspear.normal
     legion:
         description: Open the legion menu
         usage: /legion [name/menu]
-        permission: wauz.normal
+        permission: lliekspear.normal
     lc:
         description: Send the message in Legion chat
         usage: /lc [text]
-        permission: wauz.normal
+        permission: lliekspear.normal
     lmotd:
         description: Set the Legion Motd
         usage: /lmotd [text]
-        permission: wauz.normal
+        permission: lliekspear.normal
     apply:
         description: Apply for action
         usage: /apply
-        permission: wauz.normal
+        permission: lliekspear.normal
+    reload:
+        description: Reload the plugin
+        usage: /reload
+        permission: lliekspear.headadmin
